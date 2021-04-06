@@ -149,4 +149,4 @@ def inicio():
 
 
 if __name__ == '__main__':
-    uvicorn.run(coNNector, host='0.0.0.0', port=8000)
+    uvicorn.run(coNNector, host='0.0.0.0', port=8080)
