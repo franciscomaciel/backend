@@ -35,8 +35,11 @@ def get_pedidos_bloqueados():
                    "      AND P.FL_ANALISE_CRITICA='N' " \
                    "      AND (P.Fl_Rejeitado is null or P.Fl_Rejeitado<>'S')  " \
                    " ORDER BY  P.data_emissao DESC, P.filial, P.nu_pedido"
-    registros = databases.engine.execute(str_consulta)
-    result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
+    try:
+        registros = databases.engine.execute(str_consulta)
+        result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
+    except Exception as instancia:
+        result = {"erro" : instancia}
     return result
 
 
