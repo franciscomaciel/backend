@@ -15,8 +15,15 @@ from models import ModeloLiberarPedido, ModeloLiberarItemPedido
 origins = [
     "http://localhost:3000",
     "https://localhost:3000",
+    "http://localhost:8000",
     "http://127.0.0.1:3000",
-    "https://127.0.0.1:3000",
+    "http://10.81.100.*:8000",
+    "http://10.81.10.*:3000",
+    "http://10.10.10.236:8000",
+    "http://10.10.10.236",
+    "http://181.222.101.208",
+    "https://10.10.10.236:3000",
+    "http://10.10.10.236:3000/pedidos-bloqueados/",
 ]
 
 
