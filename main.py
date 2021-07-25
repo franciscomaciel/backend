@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import uvicorn
 
 from datetime import datetime
@@ -13,18 +14,7 @@ from models import ModeloLiberarPedido, ModeloLiberarItemPedido
 
 
 origins = [
-    "http://localhost:3000",
-    "https://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:3000",
-    "http://10.81.100.*:8000",
-    "http://10.81.10.*:3000",
-    "http://10.10.10.236:8000",
-    "http://10.10.10.236:3000", # Aqui
-    "http://10.10.10.236",
-    "http://181.222.101.208",
-    "https://10.10.10.236:3000",
-    "http://10.10.10.236:3000/pedidos-bloqueados/",
+    "http://10.10.10.236:3000",
 ]
 
 
@@ -157,4 +147,4 @@ def inicio():
 
 
 if __name__ == '__main__':
-    uvicorn.run(coNNector, host='0.0.0.0', port=8080)
+    uvicorn.run(coNNector, host='0.0.0.0', port=8000)
