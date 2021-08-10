@@ -3,14 +3,16 @@ import uvicorn
 
 from datetime import datetime
 from typing import Dict, Union
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, Depends, status
+from auth import AuthHandler
+from schemas import AuthDetails
 from crud import get_pedido_por_numero, get_pedidos, get_pedidos_bloqueados, liberar_bloqueio, \
                  get_pedidos_bloqueados_por_periodo, get_bloqueios_pedido, get_itens_pedido, \
                  liberar_bloqueio_item
 
 # from starlette.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware # from starlette.middleware.cors import CORSMiddleware
-from models import ModeloLiberarPedido, ModeloLiberarItemPedido
+from schemas import ModeloLiberarPedido, ModeloLiberarItemPedido
 
 
 origins = [
@@ -19,7 +21,7 @@ origins = [
 
 
 coNNector = FastAPI()
-
+auth_handler = AuthHandler()
 
 # Autorizando a política de Cross-Origin Resource Sharing (CORS)
 coNNector.add_middleware(
@@ -39,7 +41,7 @@ async def alive() -> Dict[str, datetime]:
 
 
 @coNNector.get("/pedidos/", status_code=status.HTTP_200_OK)
-async def todos_pedidos():
+async def todos_pedidos(auth_details = Depends(auth_handler.auth_wrapper)):
     """ Retorna todos os pedidos cadastrados """
     result = get_pedidos()
     if result:
@@ -52,7 +54,7 @@ async def todos_pedidos():
 
 
 @coNNector.get("/pedidos-bloqueados/", status_code=status.HTTP_200_OK)
-async def pedidos_bloqueados():
+async def pedidos_bloqueados(auth_details = Depends(auth_handler.auth_wrapper)):
     result = get_pedidos_bloqueados()
     if result:
         return result
@@ -64,7 +66,7 @@ async def pedidos_bloqueados():
 
 
 @coNNector.get("/pedidos-bloqueados-por-periodo/", status_code=status.HTTP_200_OK)
-async def pedidos_bloqueados_por_periodo(data_ini:str, data_fim:str):
+async def pedidos_bloqueados_por_periodo(data_ini:str, data_fim:str, auth_details = Depends(auth_handler.auth_wrapper)):
     result = get_pedidos_bloqueados_por_periodo(data_ini, data_fim)
     if result:
         return result
@@ -76,7 +78,7 @@ async def pedidos_bloqueados_por_periodo(data_ini:str, data_fim:str):
 
 
 @coNNector.get("/pedidos/{id_pedido}/")
-async def um_pedido(id_pedido: int) -> Dict[str, Union[float, int, str]]:
+async def um_pedido(id_pedido: int, auth_details = Depends(auth_handler.auth_wrapper)) -> Dict[str, Union[float, int, str]]:
     result = get_pedido_por_numero(id_pedido)
     if result:
         return result
@@ -95,7 +97,7 @@ async def desbloquear_pedido(numero_pedido_filial: str, codigo_usuario_liberador
 
 
 @coNNector.post("/desbloquear-pedido/")
-async def desbloquear_pedido(pedido: ModeloLiberarPedido):
+async def desbloquear_pedido(pedido: ModeloLiberarPedido, auth_details = Depends(auth_handler.auth_wrapper)):
     numero_pedido_filial = pedido.numero_pedido_filial
     codigo_usuario_liberador = pedido.codigo_usuario_liberador
     justificativa = pedido.justificativa
@@ -103,7 +105,7 @@ async def desbloquear_pedido(pedido: ModeloLiberarPedido):
 
 
 @coNNector.post("/desbloquear-item-pedido/")
-async def desbloquear_item_pedido(item_pedido: ModeloLiberarItemPedido):
+async def desbloquear_item_pedido(item_pedido: ModeloLiberarItemPedido, auth_details = Depends(auth_handler.auth_wrapper)):
     numero_pedido_filial = item_pedido.numero_pedido_filial
     codigo_usuario_liberador = item_pedido.codigo_usuario_liberador
     justificativa = item_pedido.justificativa
@@ -112,7 +114,7 @@ async def desbloquear_item_pedido(item_pedido: ModeloLiberarItemPedido):
 
 
 @coNNector.get("/get-itens-pedido/{numero_pedido_filial}")
-async def obter_itens_pedido(numero_pedido_filial: str):
+async def obter_itens_pedido(numero_pedido_filial: str, auth_details = Depends(auth_handler.auth_wrapper)):
     result = get_itens_pedido(numero_pedido_filial)
     if result:
         return result
@@ -124,7 +126,7 @@ async def obter_itens_pedido(numero_pedido_filial: str):
 
 
 @coNNector.get("/get-bloqueios-pedido/{numero_pedido_filial}")
-async def obter_bloqueios_pedido(numero_pedido_filial: str):
+async def obter_bloqueios_pedido(numero_pedido_filial: str, auth_details = Depends(auth_handler.auth_wrapper)):
     result = get_bloqueios_pedido(numero_pedido_filial)
     if result:
         return result
@@ -134,10 +136,17 @@ async def obter_bloqueios_pedido(numero_pedido_filial: str):
             detail="Pedido não encontrado.",
         )
 
-
+"""
+*!* VERIFICAR ESTE MÉTODO:
+"""
 @coNNector.post("/login")
-def login():
-    pass
+def login(auth_details: AuthDetails):
+    user = None
+    #  TODO: *!* Implementar localização do usuário com o SQLAlchemy
+    if (user is None) or (not auth_handler.verify_password(auth_details.password, user['password'])):
+        raise HTTPException(status_code=401, detail='Login ou senha inválido.')
+    token = auth_handler.encode_token(user['auth_details'])
+    return { 'token': token }
 
 
 @coNNector.get("/")
