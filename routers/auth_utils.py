@@ -4,15 +4,13 @@ from fastapi.param_functions import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from starlette import status
-from ..infra.sqlalchemy.config.database import get_db
 from ..infra.providers import token_provider
 from jose import JWTError
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
 
 
-def obter_usuario_logado(token: str = Depends(oauth2_schema),
-                         session: Session = Depends(get_db)):
+def obter_usuario_logado(token: str = Depends(oauth2_schema)):
     # decodificar o token, pegar o telefone, buscar usuario no bd e retornar
     exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail='Token inválido')
@@ -25,7 +23,7 @@ def obter_usuario_logado(token: str = Depends(oauth2_schema),
     if not telefone:
         raise exception
 
-    usuario = RepositorioUsuario(session).obter_por_telefone(telefone)
+    usuario = RepositorioUsuario.obter_por_telefone(telefone)
 
     if not usuario:
         raise exception
