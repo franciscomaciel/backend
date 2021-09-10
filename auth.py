@@ -1,4 +1,9 @@
-import jwt
+# import jwt
 
 class AuthHandler:
-    pass
+
+    def verify_password(self, hashed_password, password):
+        pass
+
+    def encode_token(self, token):
+        pass

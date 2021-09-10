@@ -164,34 +164,6 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
     trans.commit()
 
 
-"""
-def liberar_bloqueio(pedido: ModeloLiberarPedido):
-    # Primeiro, atualizar a tabela BLOQUEIO_PEDIDO:
-    numero_pedido_filial = pedido.numero_pedido_filial
-    codigo_usuario_liberador = pedido.codigo_usuario_liberador
-    justificativa = pedido.justificativa
-    # Primeiro, atualizar a tabela BLOQUEIO_PEDIDO:
-    conn = databases.engine.connect()
-    trans = conn.begin()
-    str_consulta1 = "UPDATE CTL.BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
-                    "                           hr_liberado=SUBSTR(TO_CHAR(systimestamp, 'HH24MIssFF'),1,8), " \
-                    "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
-                    "                           ds_Justificativa='" + justificativa + "', " \
-                    "                           ds_motivo = 'DESBLOQUEADO' " \
-                    " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\'" # AND SUBSTR(ds_motivo,1,1)=\'3\'"
-    databases.engine.execute(str_consulta1)
-    # Depois, a tabela PEDIDOS:
-    str_consulta2 = "UPDATE CTL.PEDIDOS SET fl_bloqueio='N', dt_liberado=systimestamp, " \
-                    "       hr_liberado=SUBSTR(TO_CHAR(systimestamp, \'HH24MIssFF\'),1,8), " \
-                    "       cd_usuario=\'" + codigo_usuario_liberador + "\', ds_motivo='DESBLOQUEADO', " \
-                    "       ds_Justificativa='" + justificativa + "', " \
-                    "       dt_impressao_of=NULL, hr_impressao_of=NULL " \
-                    " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\'"
-    databases.engine.execute(str_consulta2)
-    trans.commit()
-"""
-
-
 def existe_usuario(login_ad: str):
     str_consulta = "SELECT * " \
                    " FROM CTL.WCONNECTOR_CREDENCIAL " \
