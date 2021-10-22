@@ -167,7 +167,7 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
 def existe_usuario(login_ad: str):
     str_consulta = "SELECT * " \
                    " FROM CTL.WCONNECTOR_CREDENCIAL " \
-                   " WHERE CD_LOGIN_AD = \'" + login_ad +  "\' "
+                   " WHERE LOGIN_AD = \'" + login_ad +  "\' "
     registros = databases.engine.execute(str_consulta)
     rows_amount = 0
     for row in registros:
