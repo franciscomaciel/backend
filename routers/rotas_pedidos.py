@@ -1,8 +1,9 @@
-from fastapi import APIRouter, status, Depends, HTTPException
-from crud import existe_usuario
-from crud import get_pedido_por_numero_pedido_filial, get_pedidos_bloqueados, get_pedidos_bloqueados_por_periodo, \
-    get_bloqueios_pedido, get_itens_pedido, liberar_bloqueio, liberar_bloqueio_item
-from schemas.schemas import SchemaLiberarPedido, SchemaLiberarItemPedido
+from fastapi import APIRouter, status, HTTPException
+from services import existe_usuario
+from services import get_pedido_por_numero_pedido_filial, get_pedidos_bloqueados, get_pedidos_bloqueados_por_periodo, \
+     get_filiais_com_pedidos_bloqueados, get_bloqueios_pedido, get_itens_pedido, liberar_bloqueio, \
+     liberar_bloqueio_item, get_pedidos_bloqueados_por_filial
+from schemas import SchemaLiberarPedido, SchemaLiberarItemPedido
 from datetime import datetime
 from typing import Dict, Union
 
@@ -24,6 +25,30 @@ async def pedidos_bloqueados():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Não há nenhum pedido bloqueado.",
+        )
+
+
+@router_pedidos.get("/pedidos-bloqueados-por-filial/{filial}/", status_code=status.HTTP_200_OK)
+async def pedidos_bloqueados(filial:str):
+    result = get_pedidos_bloqueados_por_filial(filial)
+    if result:
+        return result
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Não há nenhum pedido bloqueado para a filial fornecida.",
+        )
+
+
+@router_pedidos.get("/get-filiais-com-pedidos-bloqueados/", status_code=status.HTTP_200_OK)
+async def pedidos_bloqueados():
+    result = get_filiais_com_pedidos_bloqueados()
+    if result:
+        return result
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Não há nenhuma filial com pedidos bloqueados.",
         )
 
 
@@ -90,18 +115,6 @@ async def obter_bloqueios_pedido(numero_pedido_filial: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Pedido não encontrado.",
         )
-
-"""
-*!* VERIFICAR ESTE MÉTODO:
-@router.post("/login")
-def login(auth_details: AuthDetails):
-    user = None
-    #  TODO: *!* Implementar localização do usuário com o SQLAlchemy
-    if (user is None) or (not auth_handler.verify_password(auth_details.password, user['password'])):
-        raise HTTPException(status_code=401, detail='Login ou senha inválido.')
-    token = auth_handler.encode_token(user['auth_details'])
-    return { 'token': token }
-"""
 
 
 @router_pedidos.get("/existe-usuario/{login_usuario}", status_code=status.HTTP_200_OK)

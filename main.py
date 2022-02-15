@@ -1,21 +1,21 @@
 # -*- coding: UTF-8 -*-
 import uvicorn
-from fastapi import FastAPI
-# from starlette.middleware import Middleware
+import fastapi as _fastapi
 from fastapi.middleware.cors import CORSMiddleware
-# from starlette.middleware.cors import CORSMiddleware
-
-from auth import AuthHandler
+from routers import rotas_pedidos, rotas_auth
 
 
 # CORS
 origins = [
     "http://10.10.10.236:3000",
+    "http://0.0.0.0:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
 ]
 
 
-coNNector = FastAPI()
-auth_handler = AuthHandler()
+coNNector = _fastapi.FastAPI()
+
 
 # Autorizando a política de Cross-Origin Resource Sharing (CORS)
 coNNector.add_middleware(
@@ -27,10 +27,11 @@ coNNector.add_middleware(
 )
 
 
-# Rotas para a aplicação:
-from routers import rotas_pedidos
+# Rotas de negócio:
 coNNector.include_router(rotas_pedidos.router_pedidos)
+# Rotas de segurança:
+coNNector.include_router(rotas_auth.router_autorizacao)
 
 
 if __name__ == '__main__':
-    uvicorn.run(coNNector, host='0.0.0.0', port=8000)
+    uvicorn.run("main:coNNector", host='0.0.0.0', port=8000, reload=True)
