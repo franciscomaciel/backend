@@ -14,7 +14,7 @@ Usuario = Table('WCONNECTOR_CREDENCIAL',
 """
 class Usuario(_database.Base):
     __tablename__ = 'WCONNECTOR_CREDENCIAL'
-    __table_args__ = { "schema": "CTL" }
+    # __table_args__ = { "schema": "CTL" }
     login_ad = _sql.Column(_sql.String, primary_key=True, index=True)
     hash_senha = _sql.Column(_sql.String, primary_key=False, index=False)
     flag_admin = _sql.Column(_sql.String, primary_key=False, index=False)

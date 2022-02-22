@@ -4,12 +4,11 @@ class Config:
     HTTP_STATUS_OK = 200
 
     # Conexão com o Oracle:
-    ORACLE_USERNAME = 'IMPAR_PERRELLI'
-    ORACLE_PASSWORD = 'IMPAR_2022'
+    ORACLE_USERNAME = 'CTL'
+    ORACLE_PASSWORD = 'manager'
     ORACLE_SERVER_IP = '10.10.10.211'
     ORACLE_SERVER_PORT = '1521'
     ORACLE_SID = 'TESTE'
-    # ORACLE_SCHEMA = 'CTL'
 
     # Configurações de segurança:
     HASH_ALGORITHM = 'bcrypt'

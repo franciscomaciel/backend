@@ -35,7 +35,7 @@ def get_db():
 
 async def existe_usuario(login_ad: str):
     str_consulta = "SELECT * " \
-                   " FROM CTL.WCONNECTOR_CREDENCIAL " \
+                   " FROM WCONNECTOR_CREDENCIAL " \
                    " WHERE LOGIN_AD = UPPER(\'" + login_ad + "\') "
     registros = database.engine.execute(str_consulta)
     rows_amount = 0
@@ -56,7 +56,7 @@ async def criar_usuario(usuario: schemas.UserCreate, session: _orm.Session):
     conn = database.engine.connect()
     trans = conn.begin()
     try:
-        str_consulta = 'INSERT INTO CTL.WCONNECTOR_CREDENCIAL (login_ad, hash_senha, flag_admin) ' \
+        str_consulta = 'INSERT INTO WCONNECTOR_CREDENCIAL (login_ad, hash_senha, flag_admin) ' \
                         'VALUES     (\'{login_ad}\', \'{senha}\',\'N\')'.format(login_ad=usuario.login_ad, senha=_hash.bcrypt.hash(usuario.senha))
         database.engine.execute(str_consulta)
     except:
@@ -100,7 +100,7 @@ def get_pedidos_bloqueados():
                    "P.vl_pedido Valor, P.DESCR_MOEDA DS_MOEDA, P.cod_fiscal||P.sequencia CD_CFO, " \
                    "P.data_emissao Emissao, P.DATA_ENTRADA Entrada, P.Ds_Motivo MotivoBloqueio," \
                    "P.nu_pedido_filial PedidoFilial  " \
-                   " FROM CTL.PEDIDOS P, CTL.CLIENTES C, CTL.TABVENDEDOR V " \
+                   " FROM PEDIDOS P, CLIENTES C, TABVENDEDOR V " \
                    " WHERE C.cgc_cpf=P.cgc_cpf " \
                    "      AND V.COD_VEND=P.COD_VEND1 " \
                    "      AND P.FL_DOLAR='N' " \
@@ -122,7 +122,7 @@ def get_pedidos_bloqueados_por_filial(filial):
                    "P.vl_pedido Valor, P.DESCR_MOEDA DS_MOEDA, P.cod_fiscal||P.sequencia CD_CFO, " \
                    "P.data_emissao Emissao, P.DATA_ENTRADA Entrada, P.Ds_Motivo MotivoBloqueio," \
                    "P.nu_pedido_filial PedidoFilial  " \
-                   " FROM CTL.PEDIDOS P, CTL.CLIENTES C, CTL.TABVENDEDOR V " \
+                   " FROM PEDIDOS P, CLIENTES C, TABVENDEDOR V " \
                    " WHERE C.cgc_cpf=P.cgc_cpf " \
                    "      AND V.COD_VEND=P.COD_VEND1 " \
                    "      AND P.FILIAL='" + filial + "' " \
@@ -148,7 +148,7 @@ def get_pedidos_bloqueados_por_periodo(data_ini, data_fim):
                        "P.vl_pedido Valor, P.DESCR_MOEDA DS_MOEDA, P.cod_fiscal||P.sequencia CD_CFO, " \
                        "P.data_emissao Emissao, P.DATA_ENTRADA Entrada, P.Ds_Motivo MotivoBloqueio," \
                        "P.nu_pedido_filial PedidoFilial  " \
-                       " FROM CTL.PEDIDOS P, CTL.CLIENTES C, CTL.TABVENDEDOR V " \
+                       " FROM PEDIDOS P, CLIENTES C, TABVENDEDOR V " \
                        " WHERE C.cgc_cpf=P.cgc_cpf " \
                        "      AND V.COD_VEND=P.COD_VEND1 " \
                        "      AND P.FL_DOLAR='N' " \
@@ -170,7 +170,7 @@ def listar_pedidos(p_data_inicio, p_data_fim):
                    "P.vl_pedido Valor, P.DESCR_MOEDA DS_MOEDA, P.cod_fiscal||P.sequencia CD_CFO, " \
                    "P.data_emissao Emissao, P.DATA_ENTRADA Entrada, P.Ds_Motivo MotivoBloqueio " \
                    "P.nu_pedido_filial PedidoFilial " \
-                   " FROM CTL.PEDIDOS P, CTL.CLIENTES C, CTL.TABVENDEDOR V " \
+                   " FROM PEDIDOS P, CLIENTES C, TABVENDEDOR V " \
                    " WHERE C.cgc_cpf=P.cgc_cpf " \
                    "      AND V.COD_VEND=P.COD_VEND1 " \
                    "      AND P.FL_DOLAR='N' " \
@@ -192,7 +192,7 @@ def get_pedido_por_numero_pedido_filial(numero_pedido_filial):
                    "P.vl_pedido Valor, P.DESCR_MOEDA DS_MOEDA, P.cod_fiscal||P.sequencia CD_CFO, " \
                    "P.data_emissao Emissao, P.DATA_ENTRADA Entrada, P.Ds_Motivo MotivoBloqueio, " \
                    "P.nu_pedido_filial PedidoFilial " \
-                   " FROM CTL.PEDIDOS P, CTL.CLIENTES C, CTL.TABVENDEDOR V " \
+                   " FROM PEDIDOS P, CLIENTES C, TABVENDEDOR V " \
                    " WHERE C.cgc_cpf=P.cgc_cpf " \
                    "      AND P.NU_PEDIDO_FILIAL=:p_numero_pedido_filial " \
                    "      AND V.COD_VEND=P.COD_VEND1 "
@@ -203,7 +203,7 @@ def get_pedido_por_numero_pedido_filial(numero_pedido_filial):
 
 def get_bloqueios_pedido(numero_pedido_filial):
     str_consulta = "SELECT DS_MOTIVO, DT_INCLUSAO, SUBSTR(ds_motivo,1,1) ITEM_MOTIVO " \
-                   " FROM CTL.BLOQUEIO_PEDIDO " \
+                   " FROM BLOQUEIO_PEDIDO " \
                    " WHERE NU_PEDIDO_FILIAL =:p_numero_pedido_filial AND DS_MOTIVO!='DESBLOQUEADO'"
     registros = database.engine.execute(str_consulta, {'p_numero_pedido_filial': f'{numero_pedido_filial}'})
     result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
@@ -220,7 +220,7 @@ def get_itens_pedido(numero_pedido_filial):
                    "       (I.QUANTIDADE * I.PRECO_UNIT) VALOR, " \
                    "       I.CUSTO_MEDIO CUSTO_MEDIO, " \
                    "       ((100 * I.VL_MB) / (I.PRECO_UNIT + (I.PRECO_UNIT*I.PERC_IPI/100))) PERC_MB " \
-                   " FROM CTL.ITENS I, CTL.PRODUTO_PIRAMIDE PP " \
+                   " FROM ITENS I, PRODUTO_PIRAMIDE PP " \
                    " WHERE NU_PED_FIL_ITEM like '" + numero_pedido_filial + "%' " \
                                                                             "       AND PP.CD_ESTOQUE = I.COD_PROD " \
                                                                             " ORDER BY I.NU_ITEM"
@@ -235,7 +235,7 @@ def liberar_bloqueio(numero_pedido_filial, codigo_usuario_liberador, justificati
     conn = database.engine.connect()
     trans = conn.begin()
     try:
-        str_consulta1 = "UPDATE CTL.BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
+        str_consulta1 = "UPDATE BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
                         "                           hr_liberado=SUBSTR(TO_CHAR(systimestamp, 'HH24MIssFF'),1,8), " \
                         "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
                                                                                                 "                           ds_Justificativa='" + justificativa + "', " \
@@ -243,9 +243,9 @@ def liberar_bloqueio(numero_pedido_filial, codigo_usuario_liberador, justificati
                                                                                                                                                                   " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\'"  # AND SUBSTR(ds_motivo,1,1)=\'3\'"
         database.engine.execute(str_consulta1)
         # Depois, a tabela PEDIDOS:
-        str_consulta2 = "UPDATE CTL.PEDIDOS SET ds_motivo='DESBLOQUEADO' " \
+        str_consulta2 = "UPDATE PEDIDOS SET ds_motivo='DESBLOQUEADO' " \
                         " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\'"
-        # str_consulta2 = "UPDATE CTL.PEDIDOS SET fl_bloqueio='N', dt_liberado=systimestamp, " \
+        # str_consulta2 = "UPDATE PEDIDOS SET fl_bloqueio='N', dt_liberado=systimestamp, " \
         #                 "       hr_liberado=SUBSTR(TO_CHAR(systimestamp, \'HH24MIssFF\'),1,8), " \
         #                 "       cd_usuario=\'" + codigo_usuario_liberador + "\', ds_motivo='DESBLOQUEADO', " \
         #                 "       ds_Justificativa='" + justificativa + "', " \
@@ -263,7 +263,7 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
     # Primeiro, atualizar a tabela BLOQUEIO_PEDIDO:
     conn = database.engine.connect()
     trans = conn.begin()
-    str_consulta1 = "UPDATE CTL.BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
+    str_consulta1 = "UPDATE BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
                     "                           hr_liberado=SUBSTR(TO_CHAR(systimestamp, 'HH24MIssFF'),1,8), " \
                     "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
                                                                                             "                           ds_Justificativa='" + justificativa + "', " \
@@ -271,9 +271,9 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
                                                                                                                                                               " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\' AND SUBSTR(ds_motivo,1,1)=\'" + item_bloqueio + "\'"
     database.engine.execute(str_consulta1)
     # Depois, a tabela PEDIDOS:
-    str_consulta2 = "UPDATE CTL.PEDIDOS SET ds_motivo='DESBLOQUEADO' " \
+    str_consulta2 = "UPDATE PEDIDOS SET ds_motivo='DESBLOQUEADO' " \
                     " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\'"
-    # str_consulta2 = "UPDATE CTL.PEDIDOS SET fl_bloqueio='N', dt_liberado=systimestamp, " \
+    # str_consulta2 = "UPDATE PEDIDOS SET fl_bloqueio='N', dt_liberado=systimestamp, " \
     #                 "       hr_liberado=SUBSTR(TO_CHAR(systimestamp, \'HH24MIssFF\'),1,8), " \
     #                 "       cd_usuario=\'" + codigo_usuario_liberador + "\', ds_motivo='DESBLOQUEADO', " \
     #                 "       ds_Justificativa='" + justificativa + "', " \
@@ -285,7 +285,7 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
 
 def get_filiais_com_pedidos_bloqueados():
     str_consulta = "SELECT 	DISTINCT P.filial Filial " \
-                   "        FROM 	CTL.PEDIDOS P, CTL.CLIENTES C, CTL.TABVENDEDOR V " \
+                   "        FROM 	PEDIDOS P, CLIENTES C, TABVENDEDOR V " \
                    "        WHERE C.cgc_cpf=P.cgc_cpf " \
                    "	            AND V.COD_VEND=P.COD_VEND1 " \
                    "                AND P.FL_DOLAR='N' " \
