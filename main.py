@@ -8,7 +8,6 @@ from routers import rotas_pedidos, rotas_auth
 # CORS
 origins = [
     "http://10.10.10.236:3000",
-    "http://10.10.10.236:8000", # TESTE
     "http://0.0.0.0:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
