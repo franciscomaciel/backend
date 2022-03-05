@@ -157,8 +157,9 @@ def get_pedidos_bloqueados_por_periodo(data_ini, data_fim):
                        "      AND P.FL_ANALISE_CRITICA='N' " \
                        "      AND (P.Fl_Rejeitado is null or P.Fl_Rejeitado<>'S')  " \
                        "      AND (P.DATA_ENTRADA >= TO_DATE('" + data_ini + "', 'DD/MM/YYYY'))" \
-                                                                             "      AND (P.DATA_ENTRADA <= TO_DATE('" + data_fim + "', 'DD/MM/YYYY'))" \
-                                                                                                                                   " ORDER BY  P.data_emissao, P.filial, P.nu_pedido"
+                       "      AND (P.DATA_ENTRADA <= TO_DATE('" + data_fim + "', 'DD/MM/YYYY'))" \
+                       " ORDER BY  P.data_emissao, P.filial, P.nu_pedido"
+
         registros = database.engine.execute(str_consulta)
         result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
         return result
@@ -204,7 +205,8 @@ def get_pedido_por_numero_pedido_filial(numero_pedido_filial):
 def get_bloqueios_pedido(numero_pedido_filial):
     str_consulta = "SELECT DS_MOTIVO, DT_INCLUSAO, SUBSTR(ds_motivo,1,1) ITEM_MOTIVO " \
                    " FROM BLOQUEIO_PEDIDO " \
-                   " WHERE NU_PEDIDO_FILIAL =:p_numero_pedido_filial AND DS_MOTIVO!='DESBLOQUEADO'"
+                   " WHERE NU_PEDIDO_FILIAL =:p_numero_pedido_filial AND DS_MOTIVO!='DESBLOQUEADO' AND "\
+                   "       DT_LIBERADO IS NULL"
     registros = database.engine.execute(str_consulta, {'p_numero_pedido_filial': f'{numero_pedido_filial}'})
     result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
     return result
@@ -238,7 +240,7 @@ def liberar_bloqueio(numero_pedido_filial, codigo_usuario_liberador, justificati
         str_consulta1 = "UPDATE BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
                         "                           hr_liberado=SUBSTR(TO_CHAR(systimestamp, 'HH24MIssFF'),1,8), " \
                         "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
-                                                                                                "                           ds_Justificativa='" + justificativa + "', " \
+                        "                           ds_Justificativa='" + justificativa + "', " \
                                                                                                                                                                   "                           ds_motivo = 'DESBLOQUEADO' " \
                                                                                                                                                                   " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\'"  # AND SUBSTR(ds_motivo,1,1)=\'3\'"
         database.engine.execute(str_consulta1)
