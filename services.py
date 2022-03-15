@@ -268,9 +268,9 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
     str_consulta1 = "UPDATE BLOQUEIO_PEDIDO SET dt_liberado=systimestamp, " \
                     "                           hr_liberado=SUBSTR(TO_CHAR(systimestamp, 'HH24MIssFF'),1,8), " \
                     "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
-                                                                                            "                           ds_Justificativa='" + justificativa + "', " \
-                                                                                                                                                              "                           ds_motivo = 'DESBLOQUEADO' " \
-                                                                                                                                                              " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\' AND SUBSTR(ds_motivo,1,1)=\'" + item_bloqueio + "\'"
+                    "                           ds_Justificativa='" + justificativa + "', " \
+                    "                           ds_motivo = 'DESBLOQUEADO' " \
+                    " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\' AND SUBSTR(ds_motivo,1,1)=\'" + item_bloqueio + "\'"
     database.engine.execute(str_consulta1)
     # Depois, a tabela PEDIDOS:
     str_consulta2 = "UPDATE PEDIDOS SET ds_motivo='DESBLOQUEADO' " \
