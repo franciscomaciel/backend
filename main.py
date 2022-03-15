@@ -18,8 +18,13 @@ origins = [
 # coNNector = _fastapi.FastAPI()
 
 
+middleware = [
+    Middleware(CORSMiddleware, allow_origins=origins)
+]
+
+coNNector = _fastapi.FastAPI(middleware=middleware)
+
 # Autorizando a política de Cross-Origin Resource Sharing (CORS)
-"""
 coNNector.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -27,12 +32,6 @@ coNNector.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-"""
-middleware = [
-    Middleware(CORSMiddleware, allow_origins=origins)
-]
-
-coNNector = _fastapi.FastAPI(middleware=middleware)
 
 # Rotas de negócio:
 coNNector.include_router(rotas_pedidos.router_pedidos)
