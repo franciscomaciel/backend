@@ -1,6 +1,3 @@
-import PRODUCTION as PRODUCTION
-
-
 class Config:
 
     # Constantes:
@@ -20,7 +17,7 @@ class Config:
     EXPIRES_IN_MIN = 60*24*7                            # Token é válido por uma semana
 
     # Configurações de deploy:
-    PRODUCTION_SERVER_IP = 'http://127.0.0.1'           # Alterar para o IP de produção (http://10.10.10.236).
+    PRODUCTION_SERVER_IP = '10.10.10.236'           # Alterar para o IP de produção (http://10.10.10.236).
 
     """
         Para gerar uma nova SECRET_KEY, no console do Python:
