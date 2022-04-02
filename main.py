@@ -1,17 +1,20 @@
 # -*- coding: UTF-8 -*-
 import uvicorn
+import logging
 import fastapi as _fastapi
 # from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from routers import rotas_pedidos, rotas_auth
-from config import Config
+from config import log_config
+from config.general_config import Config
 
 
 # CORS
 origins = [
     "http://10.10.10.236",          # Apenas para execução local; remover em produção.
     "http://10.10.10.236:3000",     # Apenas para execução local; remover em produção.
+    "http://localhost:3000",        # Apenas para execução local; remover em produção.
     f'{Config.PRODUCTION_SERVER_IP}:3000',
 ]
 

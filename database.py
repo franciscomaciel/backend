@@ -2,14 +2,13 @@ import cx_Oracle
 import sqlalchemy as _sql
 import sqlalchemy.ext.declarative as _declarative
 import sqlalchemy.orm as _orm
+from config.general_config import Config
 
-from config import config
-
-dsn = cx_Oracle.makedsn(config.ORACLE_SERVER_IP, config.ORACLE_SERVER_PORT, sid=config.ORACLE_SID)
+dsn = cx_Oracle.makedsn(Config.ORACLE_SERVER_IP, Config.ORACLE_SERVER_PORT, sid=Config.ORACLE_SID)
 
 connection_str = 'oracle://{user}:{password}@{sid}'.format(
-    user=config.ORACLE_USERNAME,
-    password=config.ORACLE_PASSWORD,
+    user=Config.ORACLE_USERNAME,
+    password=Config.ORACLE_PASSWORD,
     sid=dsn
 )
 

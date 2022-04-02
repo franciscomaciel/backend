@@ -8,7 +8,7 @@ from fastapi import Depends, HTTPException, status
 import providers.hash_provider as _hash
 import providers.token_provider as _token
 import schemas, models
-from config import config
+from config import general_config
 from providers import token_provider
 from jose import JWTError
 
