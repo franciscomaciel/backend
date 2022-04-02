@@ -27,6 +27,7 @@ middleware = [
 ]
 
 coNNector = _fastapi.FastAPI(middleware=middleware)
+log = logging.getLogger("connector_web_logger")
 
 # Autorizando a política de Cross-Origin Resource Sharing (CORS)
 coNNector.add_middleware(
