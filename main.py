@@ -6,7 +6,6 @@ import fastapi as _fastapi
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from routers import rotas_pedidos, rotas_auth
-from config import log_config
 from config.general_config import Config
 
 
@@ -27,7 +26,7 @@ middleware = [
 ]
 
 coNNector = _fastapi.FastAPI(middleware=middleware)
-log = logging.getLogger("connector_web_logger")
+logging.basicConfig(filename='connector_web.log', encoding='utf-8', level=logging.DEBUG)
 
 # Autorizando a política de Cross-Origin Resource Sharing (CORS)
 coNNector.add_middleware(
