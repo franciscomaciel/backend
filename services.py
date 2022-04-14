@@ -334,3 +334,10 @@ async def get_current_user(
     return schemas.User.from_orm(user)
 
 """
+
+async def testar_conexao_bd():
+    str_consulta = "SELECT COUNT(*) TOTAL " \
+                   " FROM BLOQUEIO_PEDIDO"
+    registros = database.engine.execute(str_consulta)
+    result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
+    return result
