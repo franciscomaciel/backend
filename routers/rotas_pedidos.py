@@ -129,7 +129,18 @@ async def verificar_existencia_usuario(login_usuario: str):
         )
 
 
-@router_pedidos.get("/", status_code=status.HTTP_200_OK)
-async def inicio():
-    """ Redireciona o usuário para o endpoint /status-servidor/ , se nenhum outro endpoint for fornecido """
-    await alive()
+@router_pedidos.get("/testa_conexao", status_code=status.HTTP_200_OK)
+async def testar_conexao():
+    import database
+    str_consulta = "SELECT COUNT(*) TOTAL " \
+                   " FROM BLOQUEIO_PEDIDO"
+    registros = database.engine.execute(str_consulta)
+    rows_amount = 0
+    for row in registros:
+        rows_amount += 1
+    result = (rows_amount > 0)
+    return result
+
+
+
+
