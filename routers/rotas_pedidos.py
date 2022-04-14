@@ -127,20 +127,3 @@ async def verificar_existencia_usuario(login_usuario: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Não há nenhum usuário cadastrado com esse login.",
         )
-
-
-@router_pedidos.get("/testa_conexao", status_code=status.HTTP_200_OK)
-async def testar_conexao():
-    import database
-    str_consulta = "SELECT COUNT(*) TOTAL " \
-                   " FROM BLOQUEIO_PEDIDO"
-    registros = database.engine.execute(str_consulta)
-    rows_amount = 0
-    for row in registros:
-        rows_amount += 1
-    result = (rows_amount > 0)
-    return result
-
-
-
-
