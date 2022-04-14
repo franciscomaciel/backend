@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, HTTPException
 from services import existe_usuario
 from services import get_pedido_por_numero_pedido_filial, get_pedidos_bloqueados, get_pedidos_bloqueados_por_periodo, \
      get_filiais_com_pedidos_bloqueados, get_bloqueios_pedido, get_itens_pedido, liberar_bloqueio, \
-     liberar_bloqueio_item, get_pedidos_bloqueados_por_filial, testar_conexao_bd
+     liberar_bloqueio_item, get_pedidos_bloqueados_por_filial
 from schemas import SchemaLiberarPedido, SchemaLiberarItemPedido
 from datetime import datetime
 from typing import Dict, Union
@@ -131,13 +131,16 @@ async def verificar_existencia_usuario(login_usuario: str):
 
 @router_pedidos.get("/testa_conexao", status_code=status.HTTP_200_OK)
 async def testar_conexao():
-    result = testar_conexao_bd()
-    if result:
-        return result
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Não consegui conectar.",
-        )
+    import database
+    str_consulta = "SELECT COUNT(*) TOTAL " \
+                   " FROM BLOQUEIO_PEDIDO"
+    registros = database.engine.execute(str_consulta)
+    rows_amount = 0
+    for row in registros:
+        rows_amount += 1
+    result = (rows_amount > 0)
+    return result
+
+
 
 
