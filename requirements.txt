@@ -5,4 +5,4 @@ SQLAlchemy~=1.4.23
 starlette~=0.14.2
 pydantic~=1.8.2
 python-jose~=3.3.0
-cx-Oracle~=8.2.1
+cx-Oracle~=8.3.0

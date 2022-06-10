@@ -14,6 +14,7 @@ origins = [
     "http://10.10.10.236",          # Apenas para execução local; remover em produção.
     "http://10.10.10.236:3000",     # Apenas para execução local; remover em produção.
     "http://localhost:3000",        # Apenas para execução local; remover em produção.
+    "http://0.0.0.0:8000",
     f'{Config.PRODUCTION_SERVER_IP}:3000',
 ]
 
@@ -27,6 +28,7 @@ middleware = [
 
 coNNector = _fastapi.FastAPI(middleware=middleware)
 logging.basicConfig(filename='connector_web.log', encoding='utf-8', level=logging.DEBUG)
+
 
 # Autorizando a política de Cross-Origin Resource Sharing (CORS)
 coNNector.add_middleware(
