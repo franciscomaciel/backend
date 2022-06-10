@@ -37,4 +37,4 @@ class SchemaLiberarItemPedido(BaseModel):
     numero_pedido_filial: str
     codigo_usuario_liberador: str
     justificativa: str
-    item_bloqueio: str
+    sequencia: str

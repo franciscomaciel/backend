@@ -89,8 +89,8 @@ async def desbloquear_item_pedido(item_pedido: SchemaLiberarItemPedido):
     numero_pedido_filial = item_pedido.numero_pedido_filial
     codigo_usuario_liberador = item_pedido.codigo_usuario_liberador
     justificativa = item_pedido.justificativa
-    item_bloqueio = item_pedido.item_bloqueio
-    liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_liberador, justificativa)
+    sequencia = item_pedido.sequencia
+    liberar_bloqueio_item(numero_pedido_filial, sequencia, codigo_usuario_liberador, justificativa)
 
 
 @router_pedidos.get("/get-itens-pedido/{numero_pedido_filial}", status_code=status.HTTP_200_OK)
