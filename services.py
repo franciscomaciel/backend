@@ -203,7 +203,7 @@ def get_pedido_por_numero_pedido_filial(numero_pedido_filial):
 
 
 def get_bloqueios_pedido(numero_pedido_filial):
-    str_consulta = "SELECT DS_MOTIVO, DT_INCLUSAO, SUBSTR(ds_motivo,1,1) ITEM_MOTIVO " \
+    str_consulta = "SELECT DS_MOTIVO, DT_INCLUSAO, SEQUENCIA " \
                    " FROM BLOQUEIO_PEDIDO " \
                    " WHERE NU_PEDIDO_FILIAL =:p_numero_pedido_filial AND DS_MOTIVO!='DESBLOQUEADO' AND "\
                    "       DT_LIBERADO IS NULL"
@@ -261,7 +261,7 @@ def liberar_bloqueio(numero_pedido_filial, codigo_usuario_liberador, justificati
         trans.commit()
 
 
-def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_liberador, justificativa):
+def liberar_bloqueio_item(numero_pedido_filial, sequencia, codigo_usuario_liberador, justificativa):
     # Primeiro, atualizar a tabela BLOQUEIO_PEDIDO:
     conn = database.engine.connect()
     trans = conn.begin()
@@ -270,7 +270,7 @@ def liberar_bloqueio_item(numero_pedido_filial, item_bloqueio, codigo_usuario_li
                     "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
                     "                           ds_Justificativa='" + justificativa + "', " \
                     "                           ds_motivo = 'DESBLOQUEADO' " \
-                    " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\' AND SUBSTR(ds_motivo,1,1)=\'" + item_bloqueio + "\'"
+                    " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\' AND sequencia=" + sequencia
     database.engine.execute(str_consulta1)
     # Depois, a tabela PEDIDOS:
     str_consulta2 = "UPDATE PEDIDOS SET ds_motivo='DESBLOQUEADO' " \
