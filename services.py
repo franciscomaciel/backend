@@ -269,7 +269,7 @@ def liberar_bloqueio_item(numero_pedido_filial, sequencia, codigo_usuario_libera
                     "                           hr_liberado=SUBSTR(TO_CHAR(systimestamp, 'HH24MIssFF'),1,8), " \
                     "                           cd_usuario=\'" + codigo_usuario_liberador + "\', " \
                     "                           ds_Justificativa='" + justificativa + "' " \
-                    " WHERE  sequencia=" + sequencia
+                    " WHERE nu_pedido_filial=\'" + numero_pedido_filial + "\' AND sequencia=" + sequencia
     database.engine.execute(str_consulta1)
     # Depois, a tabela PEDIDOS:
     str_consulta2 = "UPDATE PEDIDOS SET ds_motivo='DESBLOQUEADO' "\
