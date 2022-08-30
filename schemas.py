@@ -2,7 +2,9 @@ from pydantic import BaseModel
 
 
 class _UserBase(BaseModel):
-    login_ad: str
+    login: str
+    class Config:
+        orm_mode = True
 
 
 # DTO usado para passar parâmetros para a criação de um usuário no SGBD.

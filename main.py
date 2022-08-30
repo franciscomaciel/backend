@@ -12,9 +12,10 @@ from config.general_config import Config
 # CORS
 origins = [
     "http://10.10.10.236",          # Apenas para execução local; remover em produção.
-    "http://10.10.10.236:3000",     # Apenas para execução local; remover em produção.
-    "http://localhost:3000",        # Apenas para execução local; remover em produção.
-    "http://0.0.0.0:3000",
+    "http://10.10.10.236:8000",     # Apenas para execução local; remover em produção.
+    "http://localhost:8000",        # Apenas para execução local; remover em produção.
+    "http://0.0.0.0:8000",
+    "http://localhost:3000",
     f'{Config.PRODUCTION_SERVER_IP}:3000',
 ]
 

@@ -33,10 +33,10 @@ def get_db():
         db.close()
 
 
-async def existe_usuario(login_ad: str):
+async def existe_usuario(login: str):
     str_consulta = "SELECT * " \
                    " FROM WCONNECTOR_CREDENCIAL " \
-                   " WHERE LOGIN_AD = UPPER(\'" + login_ad + "\') "
+                   " WHERE LOGIN_AD = UPPER(\'" + login + "\') "
     registros = database.engine.execute(str_consulta)
     rows_amount = 0
     for row in registros:
@@ -46,34 +46,21 @@ async def existe_usuario(login_ad: str):
 
 
 async def criar_usuario(usuario: schemas.UserCreate, session: _orm.Session):
-    usuario_bd = models.Usuario(login_ad=usuario.login_ad, hash_senha=_hash.gerar_hash(usuario.senha),
-                                temp_passwd='', flag_admin='N')
+    usuario_bd = models.Usuario(login_ad=usuario.login, hash_senha=_hash.gerar_hash(usuario.senha), flag_admin='N')
     session.add(usuario_bd)
     session.commit()
     session.refresh(usuario_bd)
-    return usuario_bd
-"""
-    conn = database.engine.connect()
-    trans = conn.begin()
-    try:
-        str_consulta = 'INSERT INTO WCONNECTOR_CREDENCIAL (login_ad, hash_senha, flag_admin) ' \
-                        'VALUES     (\'{login_ad}\', \'{senha}\',\'N\')'.format(login_ad=usuario.login_ad, senha=_hash.bcrypt.hash(usuario.senha))
-        database.engine.execute(str_consulta)
-    except:
-        trans.rollback()
-        raise
-    else:
-        trans.commit()
-"""
-
-
-async def get_usuario_by_login_ad(login_ad: str, session: _orm.Session):
-    result = session.query(models.Usuario).filter(models.Usuario.login_ad == login_ad).first()
+    result = schemas.User(login = usuario_bd.login_ad, hash_senha = usuario_bd.hash_senha)
     return result
 
 
-async def autenticar_usuario(login_ad: str, senha: str, session: _orm.Session):
-    usuario = await get_usuario_by_login_ad(login_ad=login_ad, session=session)
+async def get_usuario_by_login(login: str, session: _orm.Session):
+    result = session.query(models.Usuario).filter(models.Usuario.login_ad == login).first()
+    return result
+
+
+async def autenticar_usuario(login: str, senha: str, session: _orm.Session):
+    usuario = await get_usuario_by_login(login_ad=login, session=session)
     if not usuario:
         return False
     if not usuario.verificar_senha(senha):
@@ -81,16 +68,12 @@ async def autenticar_usuario(login_ad: str, senha: str, session: _orm.Session):
     return usuario
 
 async def criar_token(usuario: models.Usuario):
-    return _token.criar_access_token({'sub': usuario.login_ad})
-
-    # return dict(access_token={
-    #             "sub": usuario.login_ad,
-    #             "token_type": "bearer"})
+    return _token.criar_access_token({'sub': usuario.login})
 
 async def get_usuario_atual(session: _orm.Session = _fastapi.Depends(get_db), token: str = _fastapi.Depends(oauth2schema)):
     try:
-        payload = token_provider.verificar_access_token(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
-        usuario = session.query(models.Usuario).get(payload["login_ad"])
+        payload = token_provider.verificar_access_token(token, general_config.SECRET_KEY, algorithms=[general_config.ALGORITHM])
+        usuario = session.query(models.Usuario).get(payload["login"])
     except:
         raise _fastapi.HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Login do AD ou senha inválida.")
     return schemas.User.from_orm(usuario)
@@ -300,30 +283,13 @@ async def get_usuario_atual(db: _orm.Session = Depends(get_db),
     exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail='Token inválido')
     try:
-        login_ad = token_provider.verificar_access_token(token)
+        login = token_provider.verificar_access_token(token)
     except JWTError:
         raise exception
-    if not login_ad:
+    if not login:
         raise exception
-    usuario = await get_usuario_by_login_ad(login_ad, db)
+    usuario = await get_usuario_by_login(login, db)
 
     if not usuario:
         raise exception
     return usuario
-
-"""
-async def get_current_user(
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2schema),
-):
-    try:
-        payload = _jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        user = db.query(models.Usuario).get(payload["login_ad"])
-    except:
-        raise _fastapi.HTTPException(
-            status_code=401, detail="Invalid Email or Password"
-        )
-
-    return schemas.User.from_orm(user)
-
-"""

@@ -12,8 +12,8 @@ router_autorizacao = APIRouter()
                          status_code=status.HTTP_201_CREATED,
                          response_model=_schemas.User)
 async def signup(usuario: _schemas.UserCreate, db: _orm.Session = _fastapi.Depends(_services.get_db)):
-    if await _services.existe_usuario(usuario.login_ad):
-        raise _fastapi.HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Login do AD já cadastrado.")
+    if await _services.existe_usuario(usuario.login):
+        raise _fastapi.HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Usuário com este login já cadastrado.")
     return await _services.criar_usuario(usuario, db)
 
 
@@ -26,7 +26,7 @@ async def generate_token(
     usuario = await _services.autenticar_usuario(form_data.username, form_data.password, db)
 
     if not usuario:
-        raise _fastapi.HTTPException(status_code=401, detail="Login do AD ou senha inválida.")
+        raise _fastapi.HTTPException(status_code=401, detail="Login ou senha inválida.")
 
     return await _services.criar_token(usuario)
 

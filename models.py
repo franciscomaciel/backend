@@ -18,6 +18,5 @@ class Usuario(_database.Base):
     login_ad = _sql.Column(_sql.String, primary_key=True, index=True)
     hash_senha = _sql.Column(_sql.String, primary_key=False, index=False)
     flag_admin = _sql.Column(_sql.String, primary_key=False, index=False)
-    temp_passwd = _sql.Column(_sql.String, primary_key=False, index=False)
     def verificar_senha(self, password: str):
         return _hash.bcrypt.verify(password, self.hash_senha)
