@@ -54,7 +54,7 @@ async def criar_usuario(usuario: schemas.UserCreate, session: _orm.Session):
     return result
 
 
-async def get_usuario_by_login(login: str, session: _orm.Session):
+async def get_usuario_by_login(login: str, session: _orm.Session) -> models.Usuario:
     result = session.query(models.Usuario).filter(models.Usuario.login_ad == login).first()
     return result
 
