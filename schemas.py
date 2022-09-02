@@ -24,6 +24,11 @@ class User(_UserBase):
         orm_mode = True
 
 
+class LoginData(BaseModel):
+    login: str
+    senha: str
+
+
 class LoginSucesso(BaseModel):
     usuario: _UserBase
     access_token: str
