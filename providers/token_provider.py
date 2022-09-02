@@ -1,23 +1,19 @@
 from datetime import datetime, timedelta
 from jose import jwt
-
-# CONFIG
-SECRET_KEY = 'caa9c8f8620cbb30679026bb6427e11f'
-ALGORITHM = 'HS256'
-EXPIRES_IN_MIN = 3000
+from config.general_config import Config
 
 
 def criar_access_token(data: dict):
     dados = data.copy()
-    expiracao = datetime.utcnow() + timedelta(minutes=EXPIRES_IN_MIN)
+    expiracao = datetime.utcnow() + timedelta(minutes=Config.EXPIRES_IN_MIN)
 
     dados.update({'exp': expiracao})
     dados.update({'token_type': 'bearer'})
 
-    token_jwt = jwt.encode(dados, SECRET_KEY, algorithm=ALGORITHM)
+    token_jwt = jwt.encode(dados, Config.SECRET_KEY, algorithm=Config.ALGORITHM)
     return token_jwt
 
 
 def verificar_access_token(token: str):
-    carga = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    carga = jwt.decode(token, Config.SECRET_KEY, algorithms=[Config.ALGORITHM])
     return carga.get('sub')
