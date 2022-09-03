@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class _UserBase(BaseModel):
-    login: str
+    login_ad: str
     class Config:
         orm_mode = True
 
@@ -24,14 +24,22 @@ class User(_UserBase):
         orm_mode = True
 
 
+class UsuarioSimples(BaseModel):
+    # id: Optional[int] = None
+    login_ad: str
+
+    class Config:
+        orm_mode = True
+
+
 class LoginData(BaseModel):
-    login: str
+    login_ad: str
     senha: str
 
 
 class LoginSucesso(BaseModel):
-    usuario: _UserBase
-    access_token: str
+    login_ad: str
+    token: str
 
 
 class SchemaLiberarPedido(BaseModel):

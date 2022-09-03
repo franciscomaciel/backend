@@ -23,20 +23,17 @@ def alchemyencoder(obj):
 
 
 def get_db():
-    print('**!** Chamou get_db()')
     db = database.SessionLocal()
-    print('**!** Instanciou SessionLocal.')
     try:
-        print('**!** Retornou uma sessão do BD.')
         yield db
     finally:
         db.close()
 
 
-async def existe_usuario(login: str):
+async def existe_usuario(login_ad: str):
     str_consulta = "SELECT * " \
                    " FROM WCONNECTOR_CREDENCIAL " \
-                   " WHERE LOGIN_AD = UPPER(\'" + login + "\') "
+                   " WHERE LOGIN_AD = UPPER(\'" + login_ad + "\') "
     registros = database.engine.execute(str_consulta)
     rows_amount = 0
     for row in registros:
@@ -46,11 +43,11 @@ async def existe_usuario(login: str):
 
 
 async def criar_usuario(usuario: schemas.UserCreate, session: _orm.Session):
-    usuario_bd = models.Usuario(login_ad=usuario.login, hash_senha=_hash.gerar_hash(usuario.senha), flag_admin='N')
+    usuario_bd = models.Usuario(login_ad=usuario.login_ad, hash_senha=_hash.gerar_hash(usuario.senha), flag_admin='N')
     session.add(usuario_bd)
     session.commit()
     session.refresh(usuario_bd)
-    result = schemas.User(login = usuario_bd.login_ad, hash_senha = usuario_bd.hash_senha)
+    result = schemas.User(login_ad = usuario_bd.login_ad, hash_senha = usuario_bd.hash_senha)
     return result
 
 
@@ -67,8 +64,6 @@ async def autenticar_usuario(login: str, senha: str, session: _orm.Session):
         return False
     return usuario
 
-async def criar_token(usuario: models.Usuario):
-    return _token.criar_access_token({'sub': usuario.login})
 
 async def get_usuario_atual(session: _orm.Session = _fastapi.Depends(get_db), token: str = _fastapi.Depends(oauth2schema)):
     try:
@@ -277,19 +272,4 @@ def get_filiais_com_pedidos_bloqueados():
     result = json.dumps([dict(r) for r in registros], default=alchemyencoder)
     return result
 
-async def get_usuario_atual(db: _orm.Session = Depends(get_db),
-                      token: str = Depends(oauth2schema),
-):
-    exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail='Token inválido')
-    try:
-        login = token_provider.verificar_access_token(token)
-    except JWTError:
-        raise exception
-    if not login:
-        raise exception
-    usuario = await get_usuario_by_login(login, db)
 
-    if not usuario:
-        raise exception
-    return usuario
