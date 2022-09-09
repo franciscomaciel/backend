@@ -12,7 +12,7 @@ class Config:
 
     # Configurações de segurança:
     HASH_ALGORITHM = 'bcrypt'
-    SECRET_KEY = 'caa9c8f8620cbb30679026bb6427e11f'     # TODO: Substituir por variável de ambiente
+    SECRET_KEY = 'caa9c8f8620cbb30679026bb6427e11f'     # TODO: Substituir por variável de ambiente: SECRET_KEY: str = os.getenv("SECRET]_KEY")
     ALGORITHM = 'HS256'
     EXPIRES_IN_MIN = 60*24*7                            # Token é válido por uma semana
 
